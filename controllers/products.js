@@ -10,13 +10,14 @@ const getAllProductsStatic = async (req, res) => {
   //   name: { $regex: search, $options: 'i' },
   // });
 
-  const products = await Product.find({}).sort('name price');
+  // const products = await Product.find({}).sort('name price');
+  const products = await Product.find({}).select('name price');
   res.status(200).json({ nbHits: products.length, products });
 };
 
 // DYNAMIC APPROACH
 const getAllProducts = async (req, res) => {
-  const { featured, company, name, sort } = req.query;
+  const { featured, company, name, sort, fields } = req.query;
   const queryObject = {};
   if (featured) {
     queryObject.featured = featured === 'true' ? true : false;
@@ -32,6 +33,7 @@ const getAllProducts = async (req, res) => {
 
   // console.log(queryObject);
   let result = Product.find(queryObject);
+  // SORT
   if (sort) {
     // console.log(sort);
     const sortList = sort.split(',').join(' ');
@@ -39,6 +41,12 @@ const getAllProducts = async (req, res) => {
   } else {
     result = result.sort('createdAt');
   }
+
+  if (fields) {
+    const fieldsList = fields.split(',').join(' ');
+    result = result.select(fieldsList);
+  }
+
   const products = await result;
 
   res.status(200).json({ nbHits: products.length, products });
