@@ -2,13 +2,15 @@ const Product = require('../models/product');
 
 // MANUAL APPROACH
 const getAllProductsStatic = async (req, res) => {
-  const search = 'chair';
-  const products = await Product.find({
-    // featured: true,
-    // page: '2',
-    // name: 'vase table',
-    name: { $regex: search, $options: 'i' },
-  });
+  // const search = 'chair';
+  // const products = await Product.find({
+  //   // featured: true,
+  //   // page: '2',
+  //   // name: 'vase table',
+  //   name: { $regex: search, $options: 'i' },
+  // });
+
+  const products = await Product.find({}).sort('name price');
   res.status(200).json({ nbHits: products.length, products });
 };
 
